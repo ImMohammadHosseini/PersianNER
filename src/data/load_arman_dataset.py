@@ -7,9 +7,6 @@ Created on Wed Sep 28 15:09:18 2022
 """
 
 
-train_dir='/home/mohammad/Desktop/prj/PersianNER/data/ArmanPersoNERCorpus.txt'
-
-
 class Read_file():
     def __init__(self, path):
         self.path=path
