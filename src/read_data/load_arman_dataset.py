@@ -5,7 +5,7 @@
 
 import polars as pl
 
-def read_data (self, path):
+def read_data (path):
     list_columns = {'sentence #':pl.Int64, 'word':pl.Utf8, 'label':pl.Utf8} 
 
     word_df = pl.DataFrame(schema=list_columns)
