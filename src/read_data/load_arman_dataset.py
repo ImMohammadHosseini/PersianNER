@@ -17,10 +17,10 @@ def read_data (self, path):
             temp=line.split()
             if len(temp)==2:
                 word_df.extend(pl.DataFrame({'sentence #': [sent_num], 
-                                             'Word': [temp[0]], 
+                                             'word': [temp[0]], 
                                              'label': [temp[1]]}))
             if not temp: sent_num +=1
     sent_df=word_df.groupby('sentence #', maintain_order=True).agg(
-        [pl.col("Word").alias("text"),pl.col("label")])
+        [pl.col("word").alias("text"),pl.col("label")])
     sent_df.apply(lambda t: (t[0], [' '.join(t[1])], [' '.join(t[2])]))
     return word_df, sent_df
