@@ -23,7 +23,21 @@ def BiLSTM_Softmax (max_len, words_num):
                   metrics=['accuracy'])
     return model
 
-
+def BiLSTM_CRF (max_len, words_num):
+    crf = CRF(14)
+    model = keras.Sequential([
+        layers.Input(shape=(max_len,)),
+        layers.Embedding(words_num, 300,trainable=True, input_length=max_len),
+        layers.Bidirectional(layers.LSTM(80, return_sequences=True,
+                                         dropout=0.5, recurrent_dropout=0.5)),
+        layers.TimeDistributed(layers.Dense(45, activation="relu")),
+        crf
+        ]
+    )
+    model.compile(optimizer=keras.optimizers.Adam(lr=0.001),
+                  loss=crf.loss_function, metrics=[crf.accuracy])
+    return model
+                     
 def BiLSTM_CNNs_CRF (max_len, words_num):
     crf = CRF(14)
     model = keras.Sequential([
@@ -37,7 +51,7 @@ def BiLSTM_CNNs_CRF (max_len, words_num):
         layers.TimeDistributed(layers.Dropout(0.25)),
         layers.TimeDistributed(layers.Flatten()),
         layers.TimeDistributed(layers.Dense(20, activation='softmax')),
-        CRF(14)
+        crf 
         ]
     )
     
