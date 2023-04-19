@@ -27,10 +27,9 @@ class Preprocessing ():
         self.label_id = {t:i+1 for i,t in enumerate(list(uniq_label['label']))}
         self.label_id["PAD"] = 0
 
-        x = [[self.words_id[w] for w in list(s)] for s in list(sent_df['text'])]
-        y = [[self.label_id[w] for w in list(s)] for s in list(sent_df['label'])]
+        self.x = [[self.words_id[w] for w in list(s)] for s in list(sent_df['text'])]
+        self.y = [[self.label_id[w] for w in list(s)] for s in list(sent_df['label'])]
         
-        return x, y 
     
     def padding (self, maxlen):
         maxlen = 160
@@ -41,6 +40,7 @@ class Preprocessing ():
 
     def train_test_data (self):
         self.y = [to_categorical(i, num_classes = len(self.label_id)) for i in self.y] 
-
-
         return train_test_split(self.x, self.y, test_size=0.2)
+    
+    def get_words_num (self):
+        return len(self.words_id)
