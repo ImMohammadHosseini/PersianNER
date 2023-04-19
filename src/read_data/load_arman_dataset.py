@@ -3,28 +3,24 @@
 
 """
 
-
+import polars as pl
 
 def read_data (self, path):
-    f = open(self.path, encoding="utf-8")
-    sentence=[]; all_sentence=[]; labels=[]; all_labels=[]; all_words=[]
-    all_words_labels=[]; sent_num = 1
-    lines=f.readlines()
-    for line in lines:
-        temp=line.split()
-        try:
-            if not temp:
-                _list=[]; _list.append(sent_num)
-                _list.append(' '.join(sentence)); _list.append(' '.join(labels))
-                all_sentence.append([' '.join(sentence)]); all_labels.append([' '.join(labels)])
-                sent_num += 1; sentence = []; labels = []
-                if sent_num % 100 == 0:
-                    print('sent_num=', sent_num)
+    list_columns = {'sentence #':pl.Int64, 'word':pl.Utf8, 'label':pl.Utf8} 
 
+    word_df = pl.DataFrame(schema=list_columns)
+    #sent_df = pl.DataFrame(schema=list_columns1)
+    
+    sent_num = 1
+    with open(path, encoding="utf-8") as infile:
+        for line in infile:
+            temp=line.split()
             if len(temp)==2:
-                word = temp[0]; label = temp[1]
-                sentence.append(word); labels.append(label.replace('\n', ''))
-                all_words.append(word); all_words_labels.append(label)
-        except:
-            print(line)
-    return all_sentence, all_labels, all_words, all_words_labels
+                word_df.extend(pl.DataFrame({'sentence #': [sent_num], 
+                                             'Word': [temp[0]], 
+                                             'label': [temp[1]]}))
+            if not temp: sent_num +=1
+    sent_df=word_df.groupby('sentence #', maintain_order=True).agg(
+        [pl.col("Word").alias("text"),pl.col("label")])
+    sent_df.apply(lambda t: (t[0], [' '.join(t[1])], [' '.join(t[2])]))
+    return word_df, sent_df
