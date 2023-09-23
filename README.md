@@ -1,4 +1,4 @@
-:zap: # PersianNER :zap:
+# :zap:  PersianNER :zap:
 
 ## :bookmark: introduction
 
